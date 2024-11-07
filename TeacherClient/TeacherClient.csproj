@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="NSwag.MSBuild" Version="14.1.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="NLog" Version="5.3.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\ClassLibrary\ClassLibrary.csproj" />
+	</ItemGroup>
+
+	<!-- Ensure NSwag CLI path is correctly configured for .NET 8, and server must be running for NSwag to access the swagger.json -->
+	<Target Name="NSwag" BeforeTargets="BeforeBuild">
+		<Exec Command="dotnet $(NSwagExe_Net80) run nswag.json /variables:Configuration=$(Configuration),OutDir=$(OutDir)" IgnoreExitCode="true" Condition="'$(NSwagExe_Net80)' != ''" />
+		<!-- Exclude files only if necessary -->
+		<ItemGroup>
+			<Compile Include="**/*$(DefaultLanguageSourceExtension)" Exclude="$(DefaultItemExcludes);$(BaseIntermediateOutputPath)**;$(BaseOutputPath)**;@(Compile)" />
+		</ItemGroup>
+	</Target>
+	<ItemGroup>
+	  <EditorConfigFiles Remove="C:\Users\abdel\source\repos\ClassroomManagement\TeacherClient\.editorconfig" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="C:\Users\abdel\source\repos\ClassroomManagement\TeacherClient\.editorconfig" />
+	</ItemGroup>
+</Project>
